@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -48,7 +48,7 @@ jobs:
 
     steps: 
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -73,8 +73,8 @@ jobs:
           script: |
             # Cleans up existing containers and images
             echo "Cleaning up the VM"
-            docker rm -f $(docker ps -aq)
-            docker rmi -f $(docker images -q)
+            docker ps -aq | xargs -r docker rm -f
+            docker images -q | xargs -r docker rmi -f
             
             # Logs in to ECR and runs the Docker container
             echo "Running container"

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # # use pip to install and run checkov cli ##  
       # - name: Install Checkov
@@ -39,7 +39,7 @@ jobs:
       ## use Builtin Github Action to run checkov 
       # https://github.com/bridgecrewio/checkov-action
       - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@v12.2469.0
         with:
           path: .
           # run only a specific check_id
@@ -56,14 +56,14 @@ jobs:
         id-token: 'write'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
 
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         # https://github.com/terraform-docs/gh-actions
-        uses: terraform-docs/gh-actions@v1.2.0
+        uses: terraform-docs/gh-actions@v1.0.0
         with:
           working-dir: .
           output-file: README.md
