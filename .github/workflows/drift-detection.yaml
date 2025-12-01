@@ -1,0 +1,49 @@
+name: Terraform Drift Detection
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Runs at 08:00 UTC every day
+  workflow_dispatch:
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+  TERRAFORM_VER: 1.5.1
+
+jobs:
+  drift-check:
+    name: Check for Drift
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VER }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan (Check Drift)
+        id: plan
+        # -detailed-exitcode returns:
+        # 0 = Succeeded with no changes (no drift)
+        # 1 = Error
+        # 2 = Succeeded with changes (drift detected)
+        run: terraform plan -detailed-exitcode -lock=false
+        continue-on-error: true
+
+      - name: Check Drift Status
+        if: steps.plan.outputs.exitcode == 2
+        run: |
+          echo "::error::Drift detected! Configuration on AWS does not match Terraform state."
+          exit 1
+
+      - name: Check Plan Failure
+        if: steps.plan.outputs.exitcode == 1
+        run: |
+          echo "::error::Terraform Plan failed!"
+          exit 1
