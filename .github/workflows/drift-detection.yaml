@@ -2,7 +2,7 @@ name: Terraform Drift Detection
 
 on:
   schedule:
-    - cron: '0 8 * * *' # Runs at 08:00 UTC every day
+#    - cron: '0 8 * * *' # Runs at 08:00 UTC every day UNCOMMENT
   workflow_dispatch:
 
 env:
@@ -47,3 +47,4 @@ jobs:
         run: |
           echo "::error::Terraform Plan failed!"
           exit 1
+
